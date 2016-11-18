@@ -1,0 +1,44 @@
+[
+  {
+    "id": 1,
+    "name": "Cannon",
+    "price": 100,
+    "range": 96,
+    "type": 1
+  },
+  {
+    "id": 2,
+    "name": "Modern Artillery",
+    "price": 1000,
+    "range": 96,
+    "type": 1
+  },
+  {
+    "id": 3,
+    "name": "Trade Ship",
+    "price": 100,
+    "range": 96,
+    "type": 2
+  },
+  {
+    "id": 4,
+    "name": "Light Cruiser",
+    "price": 1000,
+    "range": 96,
+    "type": 2
+  },
+  {
+    "id": 5,
+    "name": "Battle Cruiser",
+    "price": 2500,
+    "range": 96,
+    "type": 2
+  },
+  {
+    "id": 6,
+    "name": "Dreadnaught",
+    "price": 5000,
+    "range": 96,
+    "type": 2
+  }
+]

@@ -30,17 +30,10 @@ var _path = [
   [896, 97] // End
 ]
 
-var types = [
-  'Cannon (£100)',
-  'Modern Artillery (£1000)',
+// Ship Types
+// 1 - Artillery
+// 2 - Naval
 
-  'Trade Ship (£100)',
-  'Light Cruiser (£1000)',
-  'Battle Cruiser (£2500)',
-  'Dreadnaught (£5000)',
-
-  'Air Raid (£2000)',
-]
 
 function init() {
   _stage = new createjs.Stage('game');
@@ -50,8 +43,6 @@ function init() {
 
   _hover = new createjs.Shape();
   _hover.alpha = 0.6;
-
-  _gui = new Gui(types, _game, menuItemClicked);
 
   // stage.addEventListener('click', function(e) {
     
@@ -124,9 +115,11 @@ function init() {
   // Preloader
   _preloader = new createjs.LoadQueue();
   _preloader.addEventListener('complete', loaded);
-
-  _preloader.loadFile({id: 'map', src: 'assets/map.json'});
-  _preloader.loadFile({id: 'tileset', src: 'assets/maptiles.png'});
+  _preloader.loadManifest([
+    {id: 'map', src: 'assets/map.json'},
+    {id: 'unit_types', src: 'assets/units.json'},
+    {id: 'tileset', src: 'assets/maptiles.png'}
+  ])
 
   createjs.Ticker.addEventListener('tick', tick);
 }
@@ -141,6 +134,11 @@ function loaded(e) {
       height: 32
     }
   });
+
+  _gui = new Gui(
+    loader.getResult('unit_types'), 
+    _game, menuItemClicked
+  );
 
   initMap(loader.getResult('map'));
 
@@ -251,8 +249,9 @@ function initMap(data) {
       var x = c*w
       var y = r*h
 
-      if(tile === 1) {
-        g.beginFill('#FFA500');
+      if(tile > 0) {
+        if(tile == 1) g.beginFill('#CCCCCC');
+        else if(tile == 2) g.beginFill('#FFB6C1');
         g.drawRect(x,y,w,h);
         g.endFill();
       }

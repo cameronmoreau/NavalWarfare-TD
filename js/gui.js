@@ -22,7 +22,11 @@ var Gui = function(types, info, itemClicked) {
     bg.y = i * 60;
     bg.x = 28;
 
-    var text = new createjs.Text(item, "16px Prociono", "#ffffff");
+    var text = new createjs.Text(
+      item.name + ' (£' + item.price + ')', 
+      '16px Prociono', 
+      '#ffffff'
+    );
     text.x = 48;
     text.y = (i * 60) + 16;
     
