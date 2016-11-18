@@ -85,7 +85,6 @@ function init() {
 
     _units.push(unit);
     _stage.addChild(unit.shape);
-    //var unit = new Unit()
   })
 
   _stage.addEventListener('stagemousemove', function(e) {
@@ -140,6 +139,9 @@ function loaded(e) {
     _game, menuItemClicked
   );
 
+  _gui.setMoney(_game.money);
+  _gui.setHealth(_game.health);
+
   initMap(loader.getResult('map'));
 
   _stage.update(); 
@@ -160,13 +162,15 @@ function tick(e) {
 }
 
 function enemyFinished(enemy) {
+  removeEnemy(enemy);
   _game.health -= 10;
-  console.log(_game.health);
+  _gui.setHealth(_game.health);
 }
 
 function enemyDestroyed(enemy) {
-  removeEnemy(enemy)
-  _game.money += 500
+  removeEnemy(enemy);
+  _game.money += 10
+  _gui.setMoney(_game.money);
 }
 
 function removeEnemy(enemy) {
