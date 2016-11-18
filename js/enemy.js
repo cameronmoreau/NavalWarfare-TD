@@ -23,7 +23,7 @@ Enemy.prototype.tick = function() {
 
       // Report dead
       if(this.events.destroyed) {
-        this.events.destroyed();
+        this.events.destroyed(this);
       }
     }
 
