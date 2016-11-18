@@ -3,12 +3,13 @@ var _tileset;
 var _preloader;
 
 var _map = [];
-var _debug = null; 
+var _debug; 
 
 var _enemies = [];
 var _units = [];
 
-var _hover = null;
+var _hover;
+var _gui;
 
 var _info = {};
 
@@ -32,6 +33,8 @@ function init() {
 
   _hover = new createjs.Shape();
   _hover.alpha = 0.6;
+
+  _gui = new Gui();
 
   // stage.addEventListener('click', function(e) {
     
@@ -216,7 +219,8 @@ function initMap(data) {
       g.drawRect(x, y, w, h);
     }
   }
-
+  
   _stage.addChild(_debug);
   _stage.addChild(_hover);
+  _stage.addChild(_gui.container);
 }
