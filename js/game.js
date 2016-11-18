@@ -11,6 +11,11 @@ var _units = [];
 var _hover;
 var _gui;
 
+var _game = {
+  time: 0,
+  money: 1000,
+  health: 100
+}
 var _info = {};
 
 var _path = [
@@ -25,6 +30,18 @@ var _path = [
   [896, 97] // End
 ]
 
+var types = [
+  'Cannon (£100)',
+  'Modern Artillery (£1000)',
+
+  'Trade Ship (£100)',
+  'Light Cruiser (£1000)',
+  'Battle Cruiser (£2500)',
+  'Dreadnaught (£5000)',
+
+  'Air Raid (£2000)',
+]
+
 function init() {
   _stage = new createjs.Stage('game');
 
@@ -34,7 +51,7 @@ function init() {
   _hover = new createjs.Shape();
   _hover.alpha = 0.6;
 
-  _gui = new Gui();
+  _gui = new Gui(types, _game, menuItemClicked);
 
   // stage.addEventListener('click', function(e) {
     
@@ -46,6 +63,11 @@ function init() {
     // Esc
     if(e.keyCode === 27) {
       _debug.alpha = !_debug.alpha;
+    }
+
+    // p
+    else if(e.keyCode === 80) {
+
     }
 
     // Space
@@ -65,13 +87,13 @@ function init() {
     var color = 'purple';
     if(_hover.tile === 2) color = 'black';
 
-    var unit = new createjs.Shape();
-    unit.graphics.beginFill(color).drawCircle(0, 0, 5);
-    unit.x = _hover.x + _info.tileWidth / 2;
-    unit.y = _hover.y + _info.tileWidth / 2;
+    var unit = new Unit(
+      _hover.x + _info.tileWidth / 2,
+      _hover.y + _info.tileWidth / 2
+    );
 
     _units.push(unit);
-    _stage.addChild(unit);
+    _stage.addChild(unit.shape);
     //var unit = new Unit()
   })
 
@@ -131,16 +153,36 @@ function tick(e) {
     enemy.tick();
   });
 
+  // Update units
+  _units.forEach(function(unit) {
+    unit.tick(_enemies);
+  });
+
   _stage.update();
 }
 
 function enemyFinished(enemy) {
-  console.log('finished');
+  _game.health -= 10;
+  console.log(_game.health);
 }
 
 function enemyDestroyed(enemy) {
-  console.log('destroyed');
-  console.log(enemy);
+  removeEnemy(enemy)
+  _game.money += 500
+}
+
+function removeEnemy(enemy) {
+  _stage.removeChild(enemy.shape);
+  var i = _enemies.indexOf(enemy);
+
+  if(i !== -1) {
+    _enemies.splice(i, 1);
+  }
+}
+
+function menuItemClicked(i) {
+  console.log('item clicked');
+  console.log(i);
 }
 
 function initMap(data) {

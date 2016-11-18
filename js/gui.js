@@ -1,16 +1,6 @@
-var types = [
-  'Cannon (£100)',
-  'Modern Artillery (£1000)',
-
-  'Trade Ship (£100)',
-  'Light Cruiser (£1000)',
-  'Battle Cruiser (£2500)',
-  'Dreadnaught (£5000)',
-
-  'Air Raid (£2000)',
-]
-
-var Gui = function() {
+var Gui = function(types, info, itemClicked) {
+  this.itemClicked = itemClicked;
+  this.info = info;
   this.container = new createjs.Container();
   this.container.x = 960;
 
@@ -25,6 +15,7 @@ var Gui = function() {
   // Create Buttons
   types.forEach(function(item, i) {
     var container = new createjs.Container();
+    container.addEventListener('click', itemClicked.bind(null, info));
 
     var bg = new createjs.Shape();
     bg.graphics.beginFill('orange').drawRect(0,0,200,50);
@@ -37,6 +28,7 @@ var Gui = function() {
     
     container.addChild(bg);
     container.addChild(text);
+    
     _container.addChild(container);
   });
 }

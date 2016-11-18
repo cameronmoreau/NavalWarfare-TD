@@ -1,6 +1,10 @@
-var Enemy = function(path) {
+var Enemy = function(path, info) {
+  this.id = createjs.UID.get();
   this.path = path;
+  this.health = 100;
   this.events = {};
+  this.x = path[0][0];
+  this.y = path[0][1];
 
   this.shape = new createjs.Shape();
 
@@ -9,8 +13,8 @@ var Enemy = function(path) {
   this.alive = true;
 
   this.shape.graphics.beginFill('red').drawCircle(0, 0, 10);
-  this.shape.x = path[0][0];
-  this.shape.y = path[0][1];
+  this.shape.x = this.x;
+  this.shape.y = this.y;
 }
 
 Enemy.prototype.tick = function() {
@@ -20,11 +24,7 @@ Enemy.prototype.tick = function() {
     // Already dead
     if(this.alive) {
       this.alive = false;
-
-      // Report dead
-      if(this.events.destroyed) {
-        this.events.destroyed(this);
-      }
+      this.events.finished(this);
     }
 
     return;
@@ -38,19 +38,31 @@ Enemy.prototype.tick = function() {
   var movingY = true;
   
   // Move horizontal
-  if(this.shape.x < p[0] - offset) this.shape.x += vel;
-  else if(this.shape.x > p[0] + offset) this.shape.x -= vel;
+  if(this.x < p[0] - offset) this.x += vel;
+  else if(this.x > p[0] + offset) this.x -= vel;
   else movingX = false;
 
   // Move verticle
-  if(this.shape.y < p[1] - offset) this.shape.y += vel;
-  else if(this.shape.y > p[1] + offset) this.shape.y -= vel;
+  if(this.y < p[1] - offset) this.y += vel;
+  else if(this.y > p[1] + offset) this.y -= vel;
   else movingY = false;
 
   if(!movingX && !movingY) {
     this.pathIndex += 1;
   }
   
+  this.shape.x = this.x;
+  this.shape.y = this.y;
+}
+
+Enemy.prototype.damage = function(damage) {
+  if(!this.alive) return;
+
+  this.health -= damage;
+  if(this.health <= 0) {
+    this.alive = false;
+    this.events.destroyed(this);
+  }
 }
 
 Enemy.prototype.addEventListener = function(name, callback) {
