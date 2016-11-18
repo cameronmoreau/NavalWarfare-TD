@@ -1,13 +1,18 @@
-var stage;
-var tileset;
-var preloader;
+var _stage;
+var _tileset;
+var _preloader;
 
 var _map = [];
 var _debug = null; 
 
-var enemies = [];
+var _enemies = [];
+var _units = [];
 
-var path = [
+var _hover = null;
+
+var _info = {};
+
+var _path = [
   [0, 576], // Start
   [415, 576],
   [415, 418],
@@ -20,9 +25,13 @@ var path = [
 ]
 
 function init() {
-  stage = new createjs.Stage('game');
+  _stage = new createjs.Stage('game');
 
   _debug = new createjs.Shape();
+  _debug.alpha = 0;
+
+  _hover = new createjs.Shape();
+  _hover.alpha = 0.6;
 
   // stage.addEventListener('click', function(e) {
     
@@ -38,25 +47,61 @@ function init() {
 
     // Space
     else if(e.keyCode === 32) {
-      var enemy = new Enemy(path);
+      var enemy = new Enemy(_path);
       enemy.addEventListener('finished', enemyFinished);
       enemy.addEventListener('destroyed', enemyDestroyed);
-      enemies.push(enemy);
-      stage.addChild(enemy.shape);
+      _enemies.push(enemy);
+      _stage.addChild(enemy.shape);
     }
   }
 
-  stage.addEventListener('click', function(e) {
-    console.log(e);
+  _stage.addEventListener('click', function(e) {
+    if(typeof _hover.tile === undefined) return;
+    if(_hover.tile === 0) return;
+
+    var color = 'purple';
+    if(_hover.tile === 2) color = 'black';
+
+    var unit = new createjs.Shape();
+    unit.graphics.beginFill(color).drawCircle(0, 0, 5);
+    unit.x = _hover.x + _info.tileWidth / 2;
+    unit.y = _hover.y + _info.tileWidth / 2;
+
+    _units.push(unit);
+    _stage.addChild(unit);
     //var unit = new Unit()
   })
 
-  // Preloader
-  preloader = new createjs.LoadQueue();
-  preloader.addEventListener('complete', loaded);
+  _stage.addEventListener('stagemousemove', function(e) {
+    var x = e.stageX;
+    var y = e.stageY;
 
-  preloader.loadFile({id: 'map', src: 'assets/map.json'});
-  preloader.loadFile({id: 'tileset', src: 'assets/maptiles.png'});
+    var size = _info.tileWidth;
+
+    var row = Math.floor(y / size);
+    var col = Math.floor(x / size);
+
+    var tile = _map[row][col];
+    var color = 'red';
+
+    _hover.x = col * size;
+    _hover.y = row * size;
+    _hover.tile = tile;
+
+    // Ground unit
+    if(tile > 0) {
+      color = 'green';
+    }
+
+    _hover.graphics.clear().beginFill(color).drawRect(0, 0, size, size);
+  })
+
+  // Preloader
+  _preloader = new createjs.LoadQueue();
+  _preloader.addEventListener('complete', loaded);
+
+  _preloader.loadFile({id: 'map', src: 'assets/map.json'});
+  _preloader.loadFile({id: 'tileset', src: 'assets/maptiles.png'});
 
   createjs.Ticker.addEventListener('tick', tick);
 }
@@ -64,7 +109,7 @@ function init() {
 function loaded(e) {
   var loader = e.target;
 
-  tileset = new createjs.SpriteSheet({
+  _tileset = new createjs.SpriteSheet({
     images: [loader.getResult('tileset')],
     frames: {
       width: 32,
@@ -74,16 +119,16 @@ function loaded(e) {
 
   initMap(loader.getResult('map'));
 
-  stage.update(); 
+  _stage.update(); 
 }
 
 function tick(e) {
   // Update enemies
-  enemies.forEach(function(enemy) {
+  _enemies.forEach(function(enemy) {
     enemy.tick();
   });
 
-  stage.update();
+  _stage.update();
 }
 
 function enemyFinished(enemy) {
@@ -103,6 +148,13 @@ function initMap(data) {
 
   var tileWidth = data.tilewidth;
   var tileHeight = data.tileheight;
+
+  _info = {
+    mapWidth: mapWidth,
+    mapHeight: mapHeight,
+    tileWidth: tileWidth,
+    tileHeight: tileHeight 
+  }
 
   // Init layer map
   for(var r = 0; r < mapHeight; r++) {
@@ -125,7 +177,7 @@ function initMap(data) {
       var col = Math.floor(i % width);
 
       // Draw map
-      var shape = new createjs.Sprite(tileset, tile - 1);
+      var shape = new createjs.Sprite(_tileset, tile - 1);
       shape.x = col * tileWidth;
       shape.y = row * tileHeight;
       shape.stop();
@@ -133,9 +185,11 @@ function initMap(data) {
       // Draw type
       if(name === 'Land') {
         _map[row][col] = 1;
+      } else if (name === 'Ocean') {
+        _map[row][col] = 2;
       }
 
-      stage.addChild(shape);
+      _stage.addChild(shape);
     });
   });
 
@@ -163,5 +217,6 @@ function initMap(data) {
     }
   }
 
-  stage.addChild(_debug);
+  _stage.addChild(_debug);
+  _stage.addChild(_hover);
 }
