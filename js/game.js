@@ -11,6 +11,8 @@ var _units = [];
 var _hover;
 var _gui;
 
+var _intro;
+
 var _game = {
   time: 0,
   money: 1000,
@@ -38,6 +40,8 @@ var _path = [
 function init() {
   _stage = new createjs.Stage('game');
 
+  _intro = new Intro(_stage.canvas, startGame);
+
   _debug = new createjs.Shape();
   _debug.alpha = 0;
 
@@ -54,11 +58,6 @@ function init() {
     // Esc
     if(e.keyCode === 27) {
       _debug.alpha = !_debug.alpha;
-    }
-
-    // p
-    else if(e.keyCode === 80) {
-
     }
 
     // Space
@@ -144,6 +143,8 @@ function loaded(e) {
 
   initMap(loader.getResult('map'));
 
+  _stage.addChild(_intro.container);
+
   _stage.update(); 
 }
 
@@ -185,6 +186,10 @@ function removeEnemy(enemy) {
 function menuItemClicked(i) {
   console.log('item clicked');
   console.log(i);
+}
+
+function startGame() {
+  _stage.removeChild(_intro.container);
 }
 
 function initMap(data) {
