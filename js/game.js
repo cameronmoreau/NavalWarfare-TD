@@ -48,68 +48,6 @@ function init() {
   _hover = new createjs.Shape();
   _hover.alpha = 0.6;
 
-  // stage.addEventListener('click', function(e) {
-    
-  // });
-
-  this.document.onkeyup = function(e) {
-    console.log(e);
-
-    // Esc
-    if(e.keyCode === 27) {
-      _debug.alpha = !_debug.alpha;
-    }
-
-    // Space
-    else if(e.keyCode === 32) {
-      var enemy = new Enemy(_path);
-      enemy.addEventListener('finished', enemyFinished);
-      enemy.addEventListener('destroyed', enemyDestroyed);
-      _enemies.push(enemy);
-      _stage.addChild(enemy.shape);
-    }
-  }
-
-  _stage.addEventListener('click', function(e) {
-    if(typeof _hover.tile === undefined) return;
-    if(_hover.tile === 0) return;
-
-    var color = 'purple';
-    if(_hover.tile === 2) color = 'black';
-
-    var unit = new Unit(
-      _hover.x + _info.tileWidth / 2,
-      _hover.y + _info.tileWidth / 2
-    );
-
-    _units.push(unit);
-    _stage.addChild(unit.shape);
-  })
-
-  _stage.addEventListener('stagemousemove', function(e) {
-    var x = e.stageX;
-    var y = e.stageY;
-
-    var size = _info.tileWidth;
-
-    var row = Math.floor(y / size);
-    var col = Math.floor(x / size);
-
-    var tile = _map[row][col];
-    var color = 'red';
-
-    _hover.x = col * size;
-    _hover.y = row * size;
-    _hover.tile = tile;
-
-    // Ground unit
-    if(tile > 0) {
-      color = 'green';
-    }
-
-    _hover.graphics.clear().beginFill(color).drawRect(0, 0, size, size);
-  })
-
   // Preloader
   _preloader = new createjs.LoadQueue();
   _preloader.addEventListener('complete', loaded);
@@ -144,7 +82,6 @@ function loaded(e) {
   initMap(loader.getResult('map'));
 
   _stage.addChild(_intro.container);
-
   _stage.update(); 
 }
 
@@ -190,6 +127,73 @@ function menuItemClicked(i) {
 
 function startGame() {
   _stage.removeChild(_intro.container);
+
+  // Setup game events
+  this.document.onkeyup = onKeyPress;
+  _stage.addEventListener('click', onStageClick);
+  _stage.addEventListener('stagemousemove', onStageMouseMove);
+
+  // Setup more UI
+  _stage.addChild(_hover);
+  _stage.addChild(_gui.container);
+}
+
+function onStageClick(e) {
+  if(typeof _hover.tile === undefined) return;
+  if(_hover.tile === 0) return;
+
+  var color = 'purple';
+  if(_hover.tile === 2) color = 'black';
+
+  var unit = new Unit(
+    _hover.x + _info.tileWidth / 2,
+    _hover.y + _info.tileWidth / 2
+  );
+
+  _units.push(unit);
+  _stage.addChild(unit.shape);
+}
+
+function onStageMouseMove(e) {
+  var x = e.stageX;
+  var y = e.stageY;
+
+  var size = _info.tileWidth;
+
+  var row = Math.floor(y / size);
+  var col = Math.floor(x / size);
+
+  var tile = _map[row][col];
+  var color = 'red';
+
+  _hover.x = col * size;
+  _hover.y = row * size;
+  _hover.tile = tile;
+
+  // Ground unit
+  if(tile > 0) {
+    color = 'green';
+  }
+
+  _hover.graphics.clear().beginFill(color).drawRect(0, 0, size, size);
+}
+
+function onKeyPress(e) {
+  console.log(e);
+
+  // Esc
+  if(e.keyCode === 27) {
+    _debug.alpha = !_debug.alpha;
+  }
+
+  // Space
+  else if(e.keyCode === 32) {
+    var enemy = new Enemy(_path);
+    enemy.addEventListener('finished', enemyFinished);
+    enemy.addEventListener('destroyed', enemyDestroyed);
+    _enemies.push(enemy);
+    _stage.addChild(enemy.shape);
+  }
 }
 
 function initMap(data) {
@@ -271,6 +275,4 @@ function initMap(data) {
   }
   
   _stage.addChild(_debug);
-  _stage.addChild(_hover);
-  _stage.addChild(_gui.container);
 }

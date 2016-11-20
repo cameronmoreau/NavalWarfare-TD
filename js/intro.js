@@ -17,7 +17,7 @@ var Intro = function(canvas, done) {
   btnBg.addEventListener('click', done);
 
   var btnText = new createjs.Text(
-    "I'm ready for war",
+    "I'm ready for battle",
     '22px Prociono',
     '#fff'
   );
