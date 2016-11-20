@@ -99,6 +99,24 @@ function tick(e) {
   _stage.update();
 }
 
+function createEnemy() {
+  var enemy = new Enemy(_path);
+  enemy.addEventListener('finished', enemyFinished);
+  enemy.addEventListener('destroyed', enemyDestroyed);
+  _enemies.push(enemy);
+  _stage.addChild(enemy.shape);
+}
+
+function deployEnemies(amount) {
+  var i = 0;
+  var timer = setInterval(function() {
+    i++;
+    if(i >= amount) clearInterval(timer);
+
+    createEnemy();
+  }, 200);
+}
+
 function enemyFinished(enemy) {
   removeEnemy(enemy);
   _game.health -= 10;
@@ -136,6 +154,8 @@ function startGame() {
   // Setup more UI
   _stage.addChild(_hover);
   _stage.addChild(_gui.container);
+
+  deployEnemies(6);
 }
 
 function onStageClick(e) {
@@ -179,8 +199,6 @@ function onStageMouseMove(e) {
 }
 
 function onKeyPress(e) {
-  console.log(e);
-
   // Esc
   if(e.keyCode === 27) {
     _debug.alpha = !_debug.alpha;
@@ -188,11 +206,8 @@ function onKeyPress(e) {
 
   // Space
   else if(e.keyCode === 32) {
-    var enemy = new Enemy(_path);
-    enemy.addEventListener('finished', enemyFinished);
-    enemy.addEventListener('destroyed', enemyDestroyed);
-    _enemies.push(enemy);
-    _stage.addChild(enemy.shape);
+    //createEnemy();
+    deployEnemies(5);
   }
 }
 
