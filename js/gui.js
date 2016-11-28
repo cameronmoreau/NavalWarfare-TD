@@ -93,6 +93,10 @@ Gui.prototype.setHealth = function(amount) {
   this.healthText.text = 'Health: ' + amount;
 }
 
+Gui.prototype.setTime = function(time) {
+  this.timeText.text = 'Time: ' + time;
+}
+
 Gui.prototype.drawButton = function(btn, color) {
   btn.graphics
     .clear()

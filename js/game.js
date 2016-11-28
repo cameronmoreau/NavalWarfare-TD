@@ -16,10 +16,15 @@ var _gui;
 
 var _intro;
 
+var started = false;
+
 var _game = {
-  time: 0,
   money: 500,
-  health: 100
+  health: 100,
+  clock: {
+    hour: 14,
+    min: 20,
+  }
 }
 var _info = {};
 
@@ -118,6 +123,10 @@ function enemyFinished(enemy) {
   removeEnemy(enemy);
   _game.health -= 10;
   _gui.setHealth(_game.health);
+
+  if(_game.health <= 0) {
+    gameOver(false);
+  }
 }
 
 function enemyDestroyed(enemy) {
@@ -138,6 +147,7 @@ function removeEnemy(enemy) {
 /* -- Events -- */
 
 function startGame() {
+  started = true;
   _stage.removeChild(_intro.container);
 
   // Setup game events
@@ -207,6 +217,18 @@ function onKeyPress(e) {
 
 /* -- Engine Utilities -- */
 
+function gameOver(won) {
+  var url;
+
+  if(won) {
+    url = 'http://i.giphy.com/EWWdvQngcLt6g.gif';
+  } else {
+    url = 'http://i.giphy.com/d2Zh2evUqsXo7sje.gif';
+  }
+
+  window.location.href = url;
+}
+
 function loaded(e) {
   var loader = e.target;
 
@@ -249,7 +271,30 @@ function tick(e) {
     unit.tick(_enemies);
   });
 
+  if(started) {
+    tickClock();
+  }
+
   _stage.update();
+}
+
+function tickClock() {
+  _game.clock.min += 1;
+
+  if(_game.clock.min >= 60) {
+    _game.clock.hour += 1;
+    _game.clock.min = 0;
+
+    if(_game.clock.hour >= 24) {
+      _game.clock.hour = 0;
+    }
+  }
+
+  if(_game.clock.hour === 7 && _game.clock.min > 15) {
+    gameOver(true);
+  }
+
+  _gui.setTime(_game.clock.hour + ':' + _game.clock.min);
 }
 
 function initMap(data) {
