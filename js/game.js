@@ -18,7 +18,7 @@ var _intro;
 
 var _game = {
   time: 0,
-  money: 1000,
+  money: 500,
   health: 100
 }
 var _info = {};
@@ -71,8 +71,15 @@ function showHover(show) {
 }
 
 function menuItemClicked(item) {
-  showHover(true);
-  _selectedUnit = item;
+  // Don't allow double selection
+  if(_selectedUnit) return;
+
+  if(item.price <= _game.money) {
+    showHover(true);
+    _selectedUnit = item;
+    _game.money -= item.price;
+    _gui.setMoney(_game.money);
+  }
 }
 
 function placeUnit() {
@@ -85,6 +92,7 @@ function placeUnit() {
   _units.push(unit);
   _stage.addChild(unit.shape);
   showHover(false);
+  _selectedUnit = null;
 }
 
 /* -- Enemy Utilities -- */

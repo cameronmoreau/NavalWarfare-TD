@@ -3,6 +3,9 @@ var Gui = function(types, info, itemClicked) {
   this.info = info;
   this.container = new createjs.Container();
   this.container.x = 960;
+  this.types = types;
+
+  this.buttons = [];
 
   var _container = this.container;
 
@@ -46,12 +49,13 @@ var Gui = function(types, info, itemClicked) {
   
   // Create Buttons
   var top = 120;
+  var self = this;
   types.forEach(function(item, i) {
     var container = new createjs.Container();
     container.addEventListener('click', itemClicked.bind(null, item));
 
     var bg = new createjs.Shape();
-    bg.graphics.beginFill('orange').drawRect(0,0,200,50);
+    self.drawButton(bg, 'gray');
     bg.y = i * 60 + top;
     bg.x = 28;
 
@@ -63,8 +67,8 @@ var Gui = function(types, info, itemClicked) {
     text.x = 48;
     text.y = (i * 60) + 16 + top;
     
-    container.addChild(bg);
-    container.addChild(text);
+    self.buttons.push(bg);
+    container.addChild(bg, text);
     
     _container.addChild(container);
   });
@@ -72,8 +76,26 @@ var Gui = function(types, info, itemClicked) {
 
 Gui.prototype.setMoney = function(amount) {
   this.moneyText.text = 'Money: £' + amount;
+  for(var i = 0; i < this.types.length; i++) {
+    var type = this.types[i];
+    var btn = this.buttons[i];
+    var color = 'gray';
+
+    if(type.price <= amount) {
+      color = 'orange'
+    }
+
+    this.drawButton(btn, color);
+  }
 }
 
 Gui.prototype.setHealth = function(amount) {
   this.healthText.text = 'Health: ' + amount;
+}
+
+Gui.prototype.drawButton = function(btn, color) {
+  btn.graphics
+    .clear()
+    .beginFill(color)
+    .drawRect(0,0,200,50);
 }
