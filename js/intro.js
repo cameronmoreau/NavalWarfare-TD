@@ -35,8 +35,13 @@ var Intro = function(canvas, done) {
   title.x = width / 2;
 
   var story = new createjs.Text(
-    "The year is 1916 and you are British Admiral, Sir John Jellicoe.\n" +
-    "The Germans are approaching and your fleet is running thin...", 
+    "The year is 1916 and you are British Vice-Admiral, David Beatty.\n" +
+    "The Germans are approaching and your fleet is running thin...\n\n" +
+    "It is 2:20pm and you must use your Admiral abilities to command\n" +
+    "your fleet and hold the Germans back until 7:15am the next morning.\n\n" +
+    "Place land units on the coast and naval units in the ocean. The more\n" +
+    "German ships you sink, the more money you will get to upgrade your fleet.\n\n" +
+    "Best of luck, and don't die.", 
     '18px Prociono', 
     '#ffffff'
   );

@@ -1,4 +1,4 @@
-var Enemy = function(path, info) {
+var Enemy = function(path, velocity) {
   this.id = createjs.UID.get();
   this.path = path;
   this.health = 10;
@@ -9,7 +9,7 @@ var Enemy = function(path, info) {
   this.container = new createjs.Container();
   this.shape = new createjs.Shape();
 
-  this.velocity = 10;
+  this.velocity = velocity;
   this.pathIndex = 0;
   this.alive = true;
 

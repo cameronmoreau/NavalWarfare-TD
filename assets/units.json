@@ -12,7 +12,7 @@
   {
     "id": 2,
     "name": "Modern Artillery",
-    "price": 1000,
+    "price": 800,
     "range": 96,
     "damage": 10,
     "rate": 20,
@@ -32,7 +32,7 @@
   {
     "id": 4,
     "name": "Light Cruiser",
-    "price": 1000,
+    "price": 800,
     "range": 96,
     "damage": 5,
     "rate": 30,
@@ -42,7 +42,7 @@
   {
     "id": 5,
     "name": "Battle Cruiser",
-    "price": 2500,
+    "price": 2200,
     "range": 160,
     "damage": 9,
     "rate": 20,
@@ -51,7 +51,7 @@
   },
   {
     "id": 6,
-    "name": "Dreadnaught",
+    "name": "Destroyer",
     "price": 5000,
     "range": 192,
     "damage": 10,

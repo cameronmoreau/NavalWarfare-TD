@@ -24,8 +24,15 @@ var _game = {
   clock: {
     hour: 14,
     min: 20,
+  },
+  wave: {
+    vel: 5,
+    amount: 3,
+    interval: 8000
   }
 }
+var _enemyTimer;
+
 var _info = {};
 
 var _path = [
@@ -101,22 +108,22 @@ function placeUnit() {
 }
 
 /* -- Enemy Utilities -- */
-function createEnemy() {
-  var enemy = new Enemy(_path);
+function createEnemy(vel) {
+  var enemy = new Enemy(_path, 5);
   enemy.addEventListener('finished', enemyFinished);
   enemy.addEventListener('destroyed', enemyDestroyed);
   _enemies.push(enemy);
   _stage.addChild(enemy.container);
 }
 
-function deployEnemies(amount) {
+function deployEnemies() {
   var i = 0;
   var timer = setInterval(function() {
     i++;
-    if(i >= amount) clearInterval(timer);
+    if(i >= _game.wave.amount) clearInterval(timer);
 
-    createEnemy();
-  }, 200);
+    createEnemy(_game.wave.vel);
+  }, 500);
 }
 
 function enemyFinished(enemy) {
@@ -131,7 +138,7 @@ function enemyFinished(enemy) {
 
 function enemyDestroyed(enemy) {
   removeEnemy(enemy);
-  _game.money += 10
+  _game.money += 80
   _gui.setMoney(_game.money);
 }
 
@@ -158,7 +165,9 @@ function startGame() {
   // Setup more UI
   _stage.addChild(_hover, _gui.container);
 
-  deployEnemies(6);
+  setInterval(tickClock, 1000);
+  runSpawner();
+  deployEnemies();
 }
 
 function onStageClick(e) {
@@ -208,14 +217,30 @@ function onKeyPress(e) {
     _debug.alpha = !_debug.alpha;
   }
 
-  // Space
-  else if(e.keyCode === 32) {
-    //createEnemy();
-    deployEnemies(5);
+  if(_debug.alpha == 1) {
+    // Money
+    if(e.keyCode == 77) {
+      _game.money += 1000;
+      _gui.setMoney(_game.money);
+    }
+
+    // Space
+    else if(e.keyCode === 32) {
+      //createEnemy();
+      deployEnemies();
+    }
   }
 }
 
 /* -- Engine Utilities -- */
+
+function runSpawner() {
+  if(_enemyTimer) {
+    clearInterval(_enemyTimer);
+  }
+
+  _enemyTimer = setInterval(deployEnemies, _game.wave.interval);
+}
 
 function gameOver(won) {
   var url;
@@ -271,16 +296,13 @@ function tick(e) {
     unit.tick(_enemies);
   });
 
-  if(started) {
-    tickClock();
-  }
-
   _stage.update();
 }
 
 function tickClock() {
-  _game.clock.min += 1;
+  _game.clock.min += 5;
 
+  // Tick the clock
   if(_game.clock.min >= 60) {
     _game.clock.hour += 1;
     _game.clock.min = 0;
@@ -288,9 +310,51 @@ function tickClock() {
     if(_game.clock.hour >= 24) {
       _game.clock.hour = 0;
     }
-  }
 
-  if(_game.clock.hour === 7 && _game.clock.min > 15) {
+    // Crappy way to incrase difficulty
+    // Pls dont judge, its due tomorrow
+    switch(_game.clock.hour) {
+      case 17:
+        _game.wave.amount = 4;
+        break;
+
+      case 18:
+        _game.wave.vel = 8;
+        _game.wave.amount = 5;
+        break;
+
+      case 19:
+        _game.wave.vel = 10;    
+        _game.wave.amount = 6;
+        _game.wave.interval = 6000;
+        runSpawner();
+        break;
+
+      case 22:
+        _game.wave.vel = 13;
+        _game.wave.amount = 8;
+        _game.wave.interval = 4500;
+        runSpawner();
+        break;
+
+      case 1:
+        _game.wave.vel = 16;
+        _game.wave.amount = 10;
+        _game.wave.interval = 2800;
+        runSpawner();
+        break;
+
+      case 4:
+        _game.wave.vel = 22;
+        _game.wave.amount = 12;
+        _game.wave.interval = 1200;
+        runSpawner();
+        break;
+    }
+  }
+  
+  // Won the game
+  if(_game.clock.hour === 7 && _game.clock.min >= 15) {
     gameOver(true);
   }
 

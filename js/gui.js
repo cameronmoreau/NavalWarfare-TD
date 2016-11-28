@@ -30,7 +30,7 @@ var Gui = function(types, info, itemClicked) {
   );
 
   this.timeText = new createjs.Text(
-    'Time: 8:00', 
+    'Time: 14:20', 
     '22px Prociono', 
     '#ffffff'
   );
