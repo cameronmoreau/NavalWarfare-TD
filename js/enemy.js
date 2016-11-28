@@ -1,20 +1,33 @@
 var Enemy = function(path, info) {
   this.id = createjs.UID.get();
   this.path = path;
-  this.health = 100;
+  this.health = 10;
   this.events = {};
   this.x = path[0][0];
   this.y = path[0][1];
 
+  this.container = new createjs.Container();
   this.shape = new createjs.Shape();
 
   this.velocity = 10;
   this.pathIndex = 0;
   this.alive = true;
 
+  this.healthText = new createjs.Text(
+    this.health, 
+    '12px Prociono', 
+    '#ffffff'
+  );
+
+  this.healthText.textBaseline = 'middle';
+  this.healthText.textAlign = 'center';
+
   this.shape.graphics.beginFill('red').drawCircle(0, 0, 10);
-  this.shape.x = this.x;
-  this.shape.y = this.y;
+
+  this.container.addChild(this.shape, this.healthText);
+
+  this.container.x = this.x;
+  this.container.y = this.y;
 }
 
 Enemy.prototype.tick = function() {
@@ -51,14 +64,16 @@ Enemy.prototype.tick = function() {
     this.pathIndex += 1;
   }
   
-  this.shape.x = this.x;
-  this.shape.y = this.y;
+  this.container.x = this.x;
+  this.container.y = this.y;
 }
 
 Enemy.prototype.damage = function(damage) {
   if(!this.alive) return;
 
   this.health -= damage;
+  this.healthText.text = this.health; 
+
   if(this.health <= 0) {
     this.alive = false;
     this.events.destroyed(this);

@@ -91,7 +91,7 @@ function createEnemy() {
   enemy.addEventListener('finished', enemyFinished);
   enemy.addEventListener('destroyed', enemyDestroyed);
   _enemies.push(enemy);
-  _stage.addChild(enemy.shape);
+  _stage.addChild(enemy.container);
 }
 
 function deployEnemies(amount) {
@@ -117,7 +117,7 @@ function enemyDestroyed(enemy) {
 }
 
 function removeEnemy(enemy) {
-  _stage.removeChild(enemy.shape);
+  _stage.removeChild(enemy.container);
   var i = _enemies.indexOf(enemy);
 
   if(i !== -1) {
