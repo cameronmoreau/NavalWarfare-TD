@@ -48,7 +48,7 @@ var Gui = function(types, info, itemClicked) {
   var top = 120;
   types.forEach(function(item, i) {
     var container = new createjs.Container();
-    container.addEventListener('click', itemClicked.bind(null, info));
+    container.addEventListener('click', itemClicked.bind(null, item));
 
     var bg = new createjs.Shape();
     bg.graphics.beginFill('orange').drawRect(0,0,200,50);

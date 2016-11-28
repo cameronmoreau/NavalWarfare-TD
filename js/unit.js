@@ -1,9 +1,10 @@
-var Unit = function(x, y) {
+var Unit = function(x, y, type) {
   this.x = x;
   this.y = y;
+  this.type = type;
   
   this.shape = new createjs.Shape();
-  this.shape.graphics.beginFill('green').drawCircle(0, 0, 5);
+  this.shape.graphics.beginFill(type.color).drawCircle(0, 0, 10);
   this.shape.x = x;
   this.shape.y = y;
 
@@ -13,7 +14,7 @@ var Unit = function(x, y) {
 Unit.prototype.tick = function(enemies) {
   this.timer += 1;
 
-  if(this.timer > 20) {
+  if(this.timer > this.type.rate) {
     this.timer = 0;
     this.attack(enemies);
   }
@@ -21,7 +22,7 @@ Unit.prototype.tick = function(enemies) {
 
 Unit.prototype.attack = function(enemies) {
   console.log('tried attack');
-  var offset = 96;
+  var offset = this.type.range;
 
   var minX = this.x - offset;
   var maxX = this.x + offset;
@@ -37,7 +38,7 @@ Unit.prototype.attack = function(enemies) {
     //console.log(enemy.x, enemy.y);
     if(enemy.x < maxX && enemy.x > minX && enemy.y > minY && enemy.y < maxY) {
       console.log('found one');
-      enemy.damage(100);
+      enemy.damage(this.type.damage);
       break;
     }
   }

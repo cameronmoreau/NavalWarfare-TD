@@ -9,6 +9,8 @@ var _enemies = [];
 var _units = [];
 
 var _hover;
+var _selectedUnit;
+
 var _gui;
 
 var _intro;
@@ -46,7 +48,7 @@ function init() {
   _debug.alpha = 0;
 
   _hover = new createjs.Shape();
-  _hover.alpha = 0.6;
+  showHover(false);
 
   // Preloader
   _preloader = new createjs.LoadQueue();
@@ -60,45 +62,30 @@ function init() {
   createjs.Ticker.addEventListener('tick', tick);
 }
 
-function loaded(e) {
-  var loader = e.target;
+/* -- GUI Utilities -- */
+function showHover(show) {
+  if(show) _hover.alpha = 0.6;
+  else _hover.alpha = 0;
+}
 
-  _tileset = new createjs.SpriteSheet({
-    images: [loader.getResult('tileset')],
-    frames: {
-      width: 32,
-      height: 32
-    }
-  });
+function menuItemClicked(item) {
+  showHover(true);
+  _selectedUnit = item;
+}
 
-  _gui = new Gui(
-    loader.getResult('unit_types'), 
-    _game, menuItemClicked
+function placeUnit() {
+  var unit = new Unit(
+    _hover.x + _info.tileWidth / 2,
+    _hover.y + _info.tileWidth / 2,
+    _selectedUnit
   );
 
-  _gui.setMoney(_game.money);
-  _gui.setHealth(_game.health);
-
-  initMap(loader.getResult('map'));
-
-  _stage.addChild(_intro.container);
-  _stage.update(); 
+  _units.push(unit);
+  _stage.addChild(unit.shape);
+  showHover(false);
 }
 
-function tick(e) {
-  // Update enemies
-  _enemies.forEach(function(enemy) {
-    enemy.tick();
-  });
-
-  // Update units
-  _units.forEach(function(unit) {
-    unit.tick(_enemies);
-  });
-
-  _stage.update();
-}
-
+/* -- Enemy Utilities -- */
 function createEnemy() {
   var enemy = new Enemy(_path);
   enemy.addEventListener('finished', enemyFinished);
@@ -138,10 +125,7 @@ function removeEnemy(enemy) {
   }
 }
 
-function menuItemClicked(i) {
-  console.log('item clicked');
-  console.log(i);
-}
+/* -- Events -- */
 
 function startGame() {
   _stage.removeChild(_intro.container);
@@ -161,17 +145,13 @@ function startGame() {
 function onStageClick(e) {
   if(typeof _hover.tile === undefined) return;
   if(_hover.tile === 0) return;
+  if(_hover.alpha === 0) return;
 
-  var color = 'purple';
-  if(_hover.tile === 2) color = 'black';
-
-  var unit = new Unit(
-    _hover.x + _info.tileWidth / 2,
-    _hover.y + _info.tileWidth / 2
-  );
-
-  _units.push(unit);
-  _stage.addChild(unit.shape);
+  if(_selectedUnit) {
+    if(_selectedUnit.type === _hover.tile) {
+      placeUnit();
+    }
+  }
 }
 
 function onStageMouseMove(e) {
@@ -190,12 +170,17 @@ function onStageMouseMove(e) {
   _hover.y = row * size;
   _hover.tile = tile;
 
-  // Ground unit
-  if(tile > 0) {
-    color = 'green';
-  }
+  // Unit was selected for hover
+  if(_selectedUnit) {
 
-  _hover.graphics.clear().beginFill(color).drawRect(0, 0, size, size);
+    if(tile === _selectedUnit.type) {
+      color = _selectedUnit.color
+    }
+
+    _hover.graphics.clear()
+      .beginFill(color)
+      .drawRect(0, 0, size, size);
+  }
 }
 
 function onKeyPress(e) {
@@ -209,6 +194,47 @@ function onKeyPress(e) {
     //createEnemy();
     deployEnemies(5);
   }
+}
+
+/* -- Engine Utilities -- */
+
+function loaded(e) {
+  var loader = e.target;
+
+  _tileset = new createjs.SpriteSheet({
+    images: [loader.getResult('tileset')],
+    frames: {
+      width: 32,
+      height: 32
+    }
+  });
+
+  _gui = new Gui(
+    loader.getResult('unit_types'), 
+    _game, menuItemClicked
+  );
+
+  _gui.setMoney(_game.money);
+  _gui.setHealth(_game.health);
+
+  initMap(loader.getResult('map'));
+
+  _stage.addChild(_intro.container);
+  _stage.update(); 
+}
+
+function tick(e) {
+  // Update enemies
+  _enemies.forEach(function(enemy) {
+    enemy.tick();
+  });
+
+  // Update units
+  _units.forEach(function(unit) {
+    unit.tick(_enemies);
+  });
+
+  _stage.update();
 }
 
 function initMap(data) {

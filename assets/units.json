@@ -4,41 +4,59 @@
     "name": "Cannon",
     "price": 100,
     "range": 96,
-    "type": 1
+    "damage": 20,
+    "rate": 40,
+    "type": 1,
+    "color": "#BD8958"
   },
   {
     "id": 2,
     "name": "Modern Artillery",
     "price": 1000,
     "range": 96,
-    "type": 1
+    "damage": 40,
+    "rate": 20,
+    "type": 1,
+    "color": "#97918C"
   },
   {
     "id": 3,
     "name": "Trade Ship",
     "price": 100,
     "range": 96,
-    "type": 2
+    "damage": 20,
+    "rate": 40,
+    "type": 2,
+    "color": "#BD8958"
   },
   {
     "id": 4,
     "name": "Light Cruiser",
     "price": 1000,
     "range": 96,
-    "type": 2
+    "damage": 40,
+    "rate": 30,
+    "type": 2,
+    "color": "#97918C"
   },
   {
     "id": 5,
     "name": "Battle Cruiser",
     "price": 2500,
-    "range": 96,
-    "type": 2
+    "range": 160,
+    "damage": 40,
+    "rate": 20,
+    "type": 2,
+    "color": "#625D58"
   },
   {
     "id": 6,
     "name": "Dreadnaught",
     "price": 5000,
-    "range": 96,
-    "type": 2
+    "range": 192,
+    "damage": 60,
+    "rate": 20,
+    "type": 2,
+    "color": "#000000"
   }
 ]
