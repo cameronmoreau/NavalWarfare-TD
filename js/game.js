@@ -7,6 +7,7 @@ var _debug;
 
 var _enemies = [];
 var _units = [];
+var _ship;
 
 var _hover;
 var _selectedUnit;
@@ -56,7 +57,8 @@ function init() {
   _preloader.loadManifest([
     {id: 'map', src: 'assets/map.json'},
     {id: 'unit_types', src: 'assets/units.json'},
-    {id: 'tileset', src: 'assets/maptiles.png'}
+    {id: 'tileset', src: 'assets/maptiles.png'},
+    {id: 'ship', src: 'assets/battleship.png'},
   ])
 
   createjs.Ticker.addEventListener('tick', tick);
@@ -136,8 +138,7 @@ function startGame() {
   _stage.addEventListener('stagemousemove', onStageMouseMove);
 
   // Setup more UI
-  _stage.addChild(_hover);
-  _stage.addChild(_gui.container);
+  _stage.addChild(_hover, _gui.container);
 
   deployEnemies(6);
 }
@@ -217,9 +218,15 @@ function loaded(e) {
   _gui.setMoney(_game.money);
   _gui.setHealth(_game.health);
 
+  _ship = new createjs.Bitmap(loader.getResult('ship'));
+  _ship.x = 750;
+  _ship.y = 20;
+  _ship.scaleX = 0.5;
+  _ship.scaleY = 0.5;
+
   initMap(loader.getResult('map'));
 
-  _stage.addChild(_intro.container);
+  _stage.addChild(_ship, _intro.container);
   _stage.update(); 
 }
 
