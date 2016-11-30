@@ -246,9 +246,9 @@ function gameOver(won) {
   var url;
 
   if(won) {
-    url = 'http://i.giphy.com/EWWdvQngcLt6g.gif';
+    url = 'https://i.giphy.com/EWWdvQngcLt6g.gif';
   } else {
-    url = 'http://i.giphy.com/d2Zh2evUqsXo7sje.gif';
+    url = 'https://i.giphy.com/d2Zh2evUqsXo7sje.gif';
   }
 
   window.top.location.href = url;
