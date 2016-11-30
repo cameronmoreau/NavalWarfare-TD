@@ -251,7 +251,7 @@ function gameOver(won) {
     url = 'http://i.giphy.com/d2Zh2evUqsXo7sje.gif';
   }
 
-  window.location.href = url;
+  window.top.location.href = url;
 }
 
 function loaded(e) {
